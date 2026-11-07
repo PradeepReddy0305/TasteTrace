@@ -9,16 +9,24 @@ let mealTypeMap = {}
 // Fetching recipies and adding to allRecipies array
 let initApp = async () => {
     try {
-        let response = await fetch("https://dummyjson.com/recipes")
+        let response = await fetch("https://dummyjson.com/recipes?limit=0")
         let data = await response.json()
         allRecipes = data.recipes
-        
+
         groupRecipesByMealType()
         renderMealTypeCards(mealTypeMap)
     } catch (error) {
         console.error("Error fetching recipes:", error)
     }
 }
+
+let home = document.getElementById("Home")
+let tt=document.getElementById("tt")
+tt.addEventListener("click", () => {
+    searchInput.style.display = "inline-block"
+    searchInput.value = ""
+    renderMealTypeCards(mealTypeMap)
+})
 
 // Group recipes into categories based on mealType array
 let groupRecipesByMealType = () => {
@@ -35,6 +43,11 @@ let groupRecipesByMealType = () => {
 
 // Render category cards on initial load
 let renderMealTypeCards = (groups) => {
+
+    home.style.display = "none"
+    topBar.remove()
+    topBar.innerHTML = ""
+
     recipeContainer.innerHTML = ""
     recipeContainer.style.display = "grid"
     recipeContainer.style.gridTemplateColumns = "repeat(3,1fr)"
@@ -49,7 +62,18 @@ let renderMealTypeCards = (groups) => {
         card.style.padding = "30px"
         card.style.cursor = "pointer"
         card.style.backgroundColor = "#111"
-        card.innerHTML = `<h2>${mealType}</h2><p>${groups[mealType].length} Recipes</p>`
+
+        let i = document.createElement("img")
+        i.src = groups[mealType][0].image
+        i.width = 250
+
+        let h = document.createElement("h2")
+        h.innerText = mealType
+
+        let p = document.createElement("p")
+        p.innerText = groups[mealType].length + " Recipies"
+
+        card.append(i, h, p);
 
         // Click handler to open specific meal type view
         card.addEventListener("click", () => {
@@ -61,20 +85,27 @@ let renderMealTypeCards = (groups) => {
     })
 }
 
+
+let topBar = document.createElement("div")
+
 // Render recipe cards for a selected meal type or search result
 let renderRecipeCards = (recipesArray, title) => {
     recipeContainer.innerHTML = ""
-    
-    // Add a back button header inside container
-    let topBar = document.createElement("div")
-    topBar.style.gridColumn = "1 / -1"
+    home.style.display = "block"
+    topBar.innerHTML = ""
+
+
     topBar.style.display = "flex"
     topBar.style.justifyContent = "space-between"
     topBar.style.alignItems = "center"
-    topBar.innerHTML = `<h2>${title} (${recipesArray.length})</h2> <button id="backBtn" style="padding: 8px 16px; background: crimson; border-radius: 8px; border: none; cursor:pointer;">Back to Categories</button>`
-    recipeContainer.appendChild(topBar)
+    topBar.style.width = "100%"
+    // topBar.innerHTML = `<h2>${title} (${recipesArray.length})</h2>`
+    let h = document.createElement("h2")
+    topBar.appendChild(h)
+    h.innerText = title + " (" + recipesArray.length + ")"
+    recipeContainer.before(topBar)
 
-    document.getElementById("backBtn").addEventListener("click", () => {
+    home.addEventListener("click", () => {
         searchInput.style.display = "inline-block"
         searchInput.value = ""
         renderMealTypeCards(mealTypeMap)
@@ -82,9 +113,9 @@ let renderRecipeCards = (recipesArray, title) => {
 
     if (recipesArray.length === 0) {
         let noRes = document.createElement("p")
-        noRes.style.gridColumn = "1 / -1"
+        // noRes.style.gridColumn = "1 / -1"
         noRes.textContent = "No recipes found."
-        recipeContainer.appendChild(noRes)
+        recipeContainer.append(noRes)
         return
     }
 
@@ -93,12 +124,12 @@ let renderRecipeCards = (recipesArray, title) => {
         recCard.className = "recipe-card"
         recCard.style.border = "1px solid #444"
         recCard.style.borderRadius = "15px"
-        recCard.style.display="grid"
-        recCard.style.gridTemplateColumns="repeat(3,1fr)"
+        recCard.style.display = "grid"
+        recCard.style.gridTemplateColumns = "repeat(3,1fr)"
         recCard.style.padding = "15px"
         recCard.style.backgroundColor = "#181818"
         recCard.style.cursor = "pointer"
-        
+
         recCard.innerHTML = `
             <img src="${recipe.image}" alt="${recipe.name}" style="width: 100%; height: 150px; object-fit: cover; border-radius: 10px;">
             <h3 style="margin: 10px 0 5px 0; font-size: 1.1rem;">${recipe.name}</h3>
@@ -119,12 +150,15 @@ searchInput.addEventListener("input", (e) => {
     let query = e.target.value.toLowerCase().trim()
     if (query === "") {
         renderMealTypeCards(mealTypeMap)
+        topBar.remove()
+        topBar.innerHTML = ""
+        home.style.display = "none"
         return
     }
 
     // Hide search if needed or keep it active while filtering all recipes
-    let filtered = allRecipes.filter(recipe => 
-        recipe.name.toLowerCase().includes(query) || 
+    let filtered = allRecipes.filter(recipe =>
+        recipe.name.toLowerCase().includes(query) ||
         recipe.ingredients.some(ing => ing.toLowerCase().includes(query))
     )
     renderRecipeCards(filtered, `Search Results for "${query}"`)

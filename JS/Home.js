@@ -2,6 +2,10 @@ let mainContainer = document.getElementById("main")
 let recipeContainer = document.getElementById("recipies")
 let searchInput = document.getElementById("csearch")
 let favBtn = document.getElementById("favbtn")
+let home = document.getElementById("homeBtn")
+
+let tt=document.getElementById("tt")
+let topBar = document.createElement("div")
 
 let allRecipes = []
 let mealTypeMap = {}
@@ -20,8 +24,7 @@ let initApp = async () => {
     }
 }
 
-let home = document.getElementById("Home")
-let tt=document.getElementById("tt")
+
 tt.addEventListener("click", () => {
     searchInput.style.display = "inline-block"
     searchInput.value = ""
@@ -45,7 +48,9 @@ let groupRecipesByMealType = () => {
 let renderMealTypeCards = (groups) => {
 
     home.style.display = "none"
-    topBar.remove()
+    // if (topBar.parentNode) {
+    //     topBar.parentNode.removeChild(topBar)
+    // }
     topBar.innerHTML = ""
 
     recipeContainer.innerHTML = ""
@@ -86,7 +91,6 @@ let renderMealTypeCards = (groups) => {
 }
 
 
-let topBar = document.createElement("div")
 
 // Render recipe cards for a selected meal type or search result
 let renderRecipeCards = (recipesArray, title) => {
@@ -138,7 +142,7 @@ let renderRecipeCards = (recipesArray, title) => {
 
         // Click recipe card -> navigate to detail page with id query param
         recCard.addEventListener("click", () => {
-            window.location.href = `recipe-detail.html?id=${recipe.id}`
+            window.location.href = `Details.html?id=${recipe.id}`
         })
 
         recipeContainer.appendChild(recCard)
@@ -166,7 +170,7 @@ searchInput.addEventListener("input", (e) => {
 
 // Navigate to favorites page
 favBtn.addEventListener("click", () => {
-    window.location.href = "favorites.html"
+    window.location.href = "Favorites.html"
 })
 
 initApp()

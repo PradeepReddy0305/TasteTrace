@@ -29,23 +29,33 @@ nav{
     display: none;
 }
 
-#favbtn{
-    height: fit-content;
-    width: fit-content;
-    padding: 10px 25px;
+#nav-buttons {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background-color: transparent;
+}
+
+#homeBtn, #favbtn {
+    padding: 10px 20px;
     background-color: crimson;
     border: 2px solid red;
     border-radius: 14px;
+    cursor: pointer;
+    margin-left: 10px;
+}
+
+#homeBtn {
+    background-color: #222;
+    border-color: goldenrod;
 }
 
 main{
-    /* border: 1px solid; */
     width: 99%;
     padding: 10px;
     height: 1200px;
-    text-align: center;
+    
     justify-items: center;
-    /* align-content: center; */
 }
 #csearch{
     padding: 10px 25px;
